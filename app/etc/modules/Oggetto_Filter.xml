@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Oggetto_Filter>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Oggetto_Filter>
+    </modules>
+</config>
