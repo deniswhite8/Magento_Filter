@@ -69,7 +69,7 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
      *
      * @return mixed
      */
-    public function getResetValue($paramName, $filterValue)
+    public function getResetValue($filterValue, $paramName)
     {
         $params = explode(',', Mage::app()->getRequest()->getParam($paramName));
         $currentKey = array_search($filterValue, $params);

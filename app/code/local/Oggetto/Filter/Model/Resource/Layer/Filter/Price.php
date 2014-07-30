@@ -391,31 +391,33 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
      */
     public function applyPriceRange($filter)
     {
-        $interval = $filter->getInterval();
-        if (!$interval) {
-            return $this;
-        }
-
-        list($from, $to) = $interval;
-        if ($from === '' && $to === '') {
+        $intervals = $filter->getPriorIntervals();
+        if (!$intervals) {
             return $this;
         }
 
         $select = $filter->getLayer()->getProductCollection()->getSelect();
         $priceExpr = $this->_getPriceExpression($filter, $select, false);
 
-        if ($to !== '') {
-            $to = (float)$to;
-            if ($from == $to) {
-                $to += self::MIN_POSSIBLE_PRICE;
+        foreach($intervals as $interval) {
+            list($from, $to) = $interval;
+            if ($from === '' && $to === '') {
+                return $this;
             }
-        }
 
-        if ($from !== '') {
-            $select->where($priceExpr . ' >= ' . $this->_getComparingValue($from, $filter));
-        }
-        if ($to !== '') {
-            $select->where($priceExpr . ' < ' . $this->_getComparingValue($to, $filter));
+            if ($to !== '') {
+                $to = (float)$to;
+                if ($from == $to) {
+                    $to += self::MIN_POSSIBLE_PRICE;
+                }
+            }
+
+            if ($from !== '') {
+                $select->where($priceExpr . ' >= ' . $this->_getComparingValue($from, $filter));
+            }
+            if ($to !== '') {
+                $select->where($priceExpr . ' < ' . $this->_getComparingValue($to, $filter));
+            }
         }
 
         return $this;

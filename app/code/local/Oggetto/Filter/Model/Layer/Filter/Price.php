@@ -391,29 +391,27 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
         }
 
         list($from, $to) = $filter;
-
         $this->setInterval(array($from, $to));
 
         $priorFilters = array();
-        for ($i = 1; $i < count($filterParams); ++$i) {
-            $priorFilter = $this->_validateFilter($filterParams[$i]);
-            if ($priorFilter) {
-                $priorFilters[] = $priorFilter;
-            } else {
-                //not valid data
-                $priorFilters = array();
+        foreach ($filterParams as $filterParam) {
+            $filter = $this->_validateFilter($filterParam);
+            if (!$filter) {
                 break;
             }
-        }
-        if ($priorFilters) {
-            $this->setPriorIntervals($priorFilters);
+
+            list($from, $to) = $filter;
+            $this->setInterval(array($from, $to));
+            $priorFilters[] = $filter;
+
+            $this->getLayer()->getState()->addFilter($this->_createItem(
+                $this->_renderRangeLabel(empty($from) ? 0 : $from, $to),
+                $filter
+            ));
         }
 
+        $this->setPriorIntervals($priorFilters);
         $this->_applyPriceRange();
-        $this->getLayer()->getState()->addFilter($this->_createItem(
-            $this->_renderRangeLabel(empty($from) ? 0 : $from, $to),
-            $filter
-        ));
 
         return $this;
     }
@@ -510,13 +508,15 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
      *
      * @return null|string
      */
-    public function getResetValue()
+    public function getResetValue($filterValue)
     {
         $priorIntervals = $this->getPriorIntervals();
         $value = array();
         if ($priorIntervals) {
             foreach ($priorIntervals as $priorInterval) {
-                $value[] = implode('-', $priorInterval);
+                if ($priorInterval !== $filterValue) {
+                    $value[] = implode('-', $priorInterval);
+                }
             }
             return implode(',', $value);
         }
