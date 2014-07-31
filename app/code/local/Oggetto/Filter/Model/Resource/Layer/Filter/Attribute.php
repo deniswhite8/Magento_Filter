@@ -56,7 +56,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
             array($tableAlias => $this->getMainTable()),
             implode(' AND ', $conditions),
             array()
-        );
+        )->group('e.entity_id');
 
         return $this;
     }
@@ -76,6 +76,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
         $select->reset(Zend_Db_Select::ORDER);
         $select->reset(Zend_Db_Select::LIMIT_COUNT);
         $select->reset(Zend_Db_Select::LIMIT_OFFSET);
+        $select->reset(Zend_Db_Select::GROUP);
 
         $connection = $this->_getReadAdapter();
         $attribute  = $filter->getAttributeModel();
@@ -88,7 +89,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
 
         if (strpos((string)$select, $tableAlias) !== false) {
             $query = new Zend_Db_Expr("SELECT `{$tableAlias}`.`value`, COUNT({$tableAlias}.entity_id) AS `count` ") .
-                (string)$select . new Zend_Db_Expr(" GROUP BY e.entity_id, {$tableAlias}.value");
+                (string)$select . new Zend_Db_Expr(" GROUP BY {$tableAlias}.value");
             $query = preg_replace("/AND \\({$tableAlias}\\.value/", "AND NOT ({$tableAlias}.value", $query);
 
             return $connection->fetchPairs($query);
@@ -97,7 +98,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
                 array($tableAlias => $this->getMainTable()),
                 join(' AND ', $conditions),
                 array('value', 'count' => new Zend_Db_Expr("COUNT({$tableAlias}.entity_id)")))
-                ->group('e.entity_id', "{$tableAlias}.value");
+                ->group("{$tableAlias}.value");
 
             return $connection->fetchPairs($select);
         }
