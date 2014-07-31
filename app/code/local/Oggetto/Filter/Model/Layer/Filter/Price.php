@@ -86,9 +86,12 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
         if (is_null($maxPrice)) {
             $collection = $this->getLayer()->getProductCollection();
             $wherePart = $collection->getSelect()->getPart(Zend_Db_Select::WHERE);
-            $collection->getSelect()->setPart(Zend_Db_Select::WHERE, null);
+            $groupPart = $collection->getSelect()->getPart(Zend_Db_Select::GROUP);
+            $collection->getSelect()->reset(Zend_Db_Select::WHERE);
+            $collection->getSelect()->reset(Zend_Db_Select::GROUP);
             $maxPrice = $collection->getMaxPrice();
             $collection->getSelect()->setPart(Zend_Db_Select::WHERE, $wherePart);
+            $collection->getSelect()->setPart(Zend_Db_Select::GROUP, $groupPart);
             $maxPrice = floor($maxPrice);
             $this->setData('max_price_int', $maxPrice);
         }
