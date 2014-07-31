@@ -87,7 +87,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
             $connection->quoteInto("{$tableAlias}.store_id = ?", $filter->getStoreId()),
         );
 
-        if (strpos((string)$select, $tableAlias) !== false) {
+        if (strpos((string)$select, "`{$tableAlias}`") !== false) {
             $query = new Zend_Db_Expr("SELECT `{$tableAlias}`.`value`, COUNT({$tableAlias}.entity_id) AS `count` ") .
                 (string)$select . new Zend_Db_Expr(" GROUP BY {$tableAlias}.value");
             $query = preg_replace("/AND \\({$tableAlias}\\.value/", "AND NOT ({$tableAlias}.value", $query);
