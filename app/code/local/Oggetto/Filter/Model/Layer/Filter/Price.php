@@ -38,6 +38,13 @@
 class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_Filter_Price
 {
     /**
+     * Filter values
+     * @var array
+     */
+    protected $_filterValues;
+
+
+    /**
      * Get price range for building filter steps
      *
      * @return int
@@ -57,13 +64,7 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
             if (!$range) {
                 $calculation = Mage::app()->getStore()->getConfig(self::XML_PATH_RANGE_CALCULATION);
                 if ($calculation == self::RANGE_CALCULATION_AUTO) {
-                    $index = 1;
-                    //do {
-                        $range = pow(10, (strlen(floor($maxPrice)) - $index));
-                        $items = $this->getRangeItemCounts($range);
-                        $index++;
-                    //}
-                    //while($range > self::MIN_RANGE_POWER && count($items) < 2);
+                    $range = pow(10, (strlen(floor($maxPrice)) - 1));
                 } else {
                     $range = (float)Mage::app()->getStore()->getConfig(self::XML_PATH_RANGE_STEP);
                 }
@@ -106,13 +107,15 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
      */
     protected function _getAdditionalRequestData()
     {
+        $separator = Mage::helper('oggetto_filter/data')->getSeparator();
+
         $result = '';
         $appliedInterval = $this->getInterval();
         if ($appliedInterval) {
-            $result = ',' . $appliedInterval[0] . '-' . $appliedInterval[1];
+            $result = $separator . $appliedInterval[0] . '-' . $appliedInterval[1];
             $priorIntervals = $this->getResetValue();
             if ($priorIntervals) {
-                $result .= ',' . $priorIntervals;
+                $result .= $separator . $priorIntervals;
             }
         }
 
@@ -128,8 +131,6 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
     {
         if (Mage::app()->getStore()->getConfig(self::XML_PATH_RANGE_CALCULATION) == self::RANGE_CALCULATION_IMPROVED) {
             return $this->_getCalculatedItemsData();
-        } elseif ($this->getInterval()) {
-            //return array();
         }
 
         $range      = $this->getPriceRange();
@@ -137,9 +138,6 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
         $data       = array();
 
         if (!empty($dbRanges)) {
-//            $lastIndex = array_keys($dbRanges);
-//            $lastIndex = $lastIndex[count($lastIndex) - 1];
-
             $lastIndex = floor((round(($this->getMaxPriceInt()) * 1, 2)) / $range) + 1;
 
             foreach ($dbRanges as $index => $count) {
@@ -150,6 +148,7 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
                     'label' => $this->_renderRangeLabel($fromPrice, $toPrice),
                     'value' => $fromPrice . '-' . $toPrice,
                     'count' => $count,
+                    'selected' => in_array(array($fromPrice, $toPrice), $this->_filterValues)
                 );
             }
         }
@@ -167,6 +166,8 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
      */
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {
+        $separator = Mage::helper('oggetto_filter/data')->getSeparator();
+
         /**
          * Filter must be string: $fromPrice-$toPrice
          */
@@ -176,14 +177,14 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
         }
 
         //validate filter
-        $filterParams = explode(',', $filter);
-        $filter = $this->_validateFilter($filterParams[0]);
-        if (!$filter) {
-            return $this;
-        }
-
-        list($from, $to) = $filter;
-        $this->setInterval(array($from, $to));
+        $filterParams = explode($separator, $filter);
+//        $filter = $this->_validateFilter($filterParams[0]);
+//        if (!$filter) {
+//            return $this;
+//        }
+//
+//        list($from, $to) = $filter;
+//        $this->setInterval(array($from, $to));
 
         $priorFilters = array();
         foreach ($filterParams as $filterParam) {
@@ -202,11 +203,15 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
             ));
         }
 
+        $this->_filterValues = $priorFilters;
+
         $this->setPriorIntervals($priorFilters);
         $this->_applyPriceRange();
 
         return $this;
     }
+
+
 
     /**
      * Get filter value for reset current filter state
@@ -215,6 +220,8 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
      */
     public function getResetValue($filterValue)
     {
+        $separator = Mage::helper('oggetto_filter/data')->getSeparator();
+
         $priorIntervals = $this->getPriorIntervals();
         $value = array();
         if ($priorIntervals) {
@@ -223,8 +230,48 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
                     $value[] = implode('-', $priorInterval);
                 }
             }
-            return implode(',', $value);
+            return implode($separator, $value);
         }
         return parent::getResetValue();
+    }
+
+
+    /**
+     * Initialize filter items
+     *
+     * @return  Mage_Catalog_Model_Layer_Filter_Abstract
+     */
+    protected function _initItems()
+    {
+        $data = $this->_getItemsData();
+        $items = array();
+        foreach ($data as $itemData) {
+            $items[] = $this->_createItem(
+                $itemData['label'],
+                $itemData['value'],
+                $itemData['selected'],
+                $itemData['count']
+            );
+        }
+        $this->_items = $items;
+        return $this;
+    }
+
+    /**
+     * Create filter item object
+     *
+     * @param   string $label
+     * @param   mixed $value
+     * @param   int $count
+     * @return  Mage_Catalog_Model_Layer_Filter_Item
+     */
+    protected function _createItem($label, $value, $selected = 0, $count=0)
+    {
+        return Mage::getModel('catalog/layer_filter_item')
+            ->setFilter($this)
+            ->setLabel($label)
+            ->setValue($value)
+            ->setSelected($selected)
+            ->setCount($count);
     }
 }

@@ -26,6 +26,12 @@
 class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Layer_Filter_Attribute
 {
     /**
+     * Filter values
+     * @var array
+     */
+    protected $_filterValues;
+
+    /**
      * Apply attribute option filter to product collection
      *
      * @param   Zend_Controller_Request_Abstract $request
@@ -34,12 +40,14 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
      */
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {
+        $separator = Mage::helper('oggetto_filter/data')->getSeparator();
+
         $filter = $request->getParam($this->_requestVar);
         if (is_array($filter)) {
             return $this;
         }
 
-        $filterArray = explode(',', $filter);
+        $this->_filterValues = $filterArray = explode($separator, $filter);
         $text = $this->_getOptionText($filter);
 
         if (!is_array($text)) {
@@ -58,22 +66,121 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
                 $this->getLayer()->getState()->addFilter($this->_createItem($text[$index], $filterItem));
             }
         }
+
         return $this;
     }
+
+
+    /**
+     * Get data array for building attribute filter items
+     *
+     * @return array
+     */
+    protected function _getItemsData()
+    {
+        $attribute = $this->getAttributeModel();
+        $this->_requestVar = $attribute->getAttributeCode();
+
+        $key = $this->getLayer()->getStateKey().'_'.$this->_requestVar;
+        $data = $this->getLayer()->getAggregator()->getCacheData($key);
+
+        if ($data === null) {
+            $options = $attribute->getFrontend()->getSelectOptions();
+            $optionsCount = $this->_getResource()->getCount($this);
+            $data = array();
+            foreach ($options as $option) {
+                if (is_array($option['value'])) {
+                    continue;
+                }
+                if (Mage::helper('core/string')->strlen($option['value'])) {
+                    $selected = in_array($option['value'], $this->_filterValues);
+                    // Check filter type
+                    if ($this->_getIsFilterableAttribute($attribute) == self::OPTIONS_ONLY_WITH_RESULTS) {
+                        if (!empty($optionsCount[$option['value']]) || $selected) {
+                            $data[] = array(
+                                'label' => $option['label'],
+                                'value' => $option['value'],
+                                'selected' => $selected,
+                                'count' => $optionsCount[$option['value']],
+                            );
+                        }
+                    } else {
+                        $data[] = array(
+                            'label' => $option['label'],
+                            'value' => $option['value'],
+                            'selected' => $selected,
+                            'count' => isset($optionsCount[$option['value']]) ? $optionsCount[$option['value']] : 0,
+                        );
+                    }
+                }
+            }
+
+            $tags = array(
+                Mage_Eav_Model_Entity_Attribute::CACHE_TAG.':'.$attribute->getId()
+            );
+
+            $tags = $this->getLayer()->getStateTags($tags);
+            $this->getLayer()->getAggregator()->saveCacheData($data, $key, $tags);
+        }
+        return $data;
+    }
+
 
     /**
      * Get filter value for reset current filter state
      *
-     * @param string $paramName   Param name
      * @param string $filterValue Filter value
      *
      * @return mixed
      */
-    public function getResetValue($filterValue, $paramName)
+    public function getResetValue($filterValue)
     {
-        $params = explode(',', Mage::app()->getRequest()->getParam($paramName));
+        $separator = Mage::helper('oggetto_filter/data')->getSeparator();
+
+        $params = $this->_filterValues;
         $currentKey = array_search($filterValue, $params);
         unset($params[$currentKey]);
-        return implode(',', $params);
+        return implode($separator, $params);
+    }
+
+
+
+    /**
+     * Initialize filter items
+     *
+     * @return  Mage_Catalog_Model_Layer_Filter_Abstract
+     */
+    protected function _initItems()
+    {
+        $data = $this->_getItemsData();
+        $items = array();
+        foreach ($data as $itemData) {
+            $items[] = $this->_createItem(
+                $itemData['label'],
+                $itemData['value'],
+                $itemData['selected'],
+                $itemData['count']
+            );
+        }
+        $this->_items = $items;
+        return $this;
+    }
+
+    /**
+     * Create filter item object
+     *
+     * @param   string $label
+     * @param   mixed $value
+     * @param   int $count
+     * @return  Mage_Catalog_Model_Layer_Filter_Item
+     */
+    protected function _createItem($label, $value, $selected = 0, $count=0)
+    {
+        return Mage::getModel('catalog/layer_filter_item')
+            ->setFilter($this)
+            ->setLabel($label)
+            ->setValue($value)
+            ->setSelected($selected)
+            ->setCount($count);
     }
 }

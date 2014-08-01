@@ -39,11 +39,13 @@ class Oggetto_Filter_Model_Layer_Filter_Item extends Mage_Catalog_Model_Layer_Fi
      */
     public function getUrl()
     {
+        $separator = Mage::helper('oggetto_filter/data')->getSeparator();
+
         $requestVarName = $this->getFilter()->getRequestVar();
         $requestValue = $this->getValue();
         $requestValueFromUrl = Mage::app()->getRequest()->getParam($requestVarName);
         if ($requestValueFromUrl) {
-            $requestVarValue = $requestValueFromUrl . ',' . $requestValue;
+            $requestVarValue = $requestValueFromUrl . $separator . $requestValue;
         } else {
             $requestVarValue = $requestValue;
         }
@@ -66,7 +68,7 @@ class Oggetto_Filter_Model_Layer_Filter_Item extends Mage_Catalog_Model_Layer_Fi
         $paramName = $this->getFilter()->getRequestVar();
         $filterValue = $this->getValue();
 
-        $query = array($paramName => $this->getFilter()->getResetValue($filterValue, $paramName));
+        $query = array($paramName => $this->getFilter()->getResetValue($filterValue));
         $params['_current']     = true;
         $params['_query']       = $query;
         $params['_escape']      = true;

@@ -33,6 +33,12 @@
 class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Model_Resource_Layer_Filter_Price
 {
     /**
+     * Filter values
+     * @var array
+     */
+    protected $_filterValues;
+
+    /**
      * Retrieve clean select with joined price index table
      *
      * @param Mage_Catalog_Model_Layer_Filter_Price $filter
@@ -43,17 +49,14 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
         $collection = $filter->getLayer()->getProductCollection();
         $collection->addPriceData($filter->getCustomerGroupId(), $filter->getWebsiteId());
 
-        //if (!is_null($collection->getCatalogPreparedSelect())) {
-        //    $select = clone $collection->getCatalogPreparedSelect();
-        //} else {
-            $select = clone $collection->getSelect();
-        //}
+        $select = clone $collection->getSelect();
 
         // reset columns, order and limitation conditions
         $select->reset(Zend_Db_Select::COLUMNS);
         $select->reset(Zend_Db_Select::ORDER);
         $select->reset(Zend_Db_Select::LIMIT_COUNT);
         $select->reset(Zend_Db_Select::LIMIT_OFFSET);
+        $select->reset(Zend_Db_Select::WHERE);
 
         // remove join with main table
         $fromPart = $select->getPart(Zend_Db_Select::FROM);
@@ -79,7 +82,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
         // processing WHERE part
         $wherePart = $select->getPart(Zend_Db_Select::WHERE);
         foreach ($wherePart as $key => $wherePartItem) {
-            $wherePart[$key] = ' NOT ' . $this->_replaceTableAlias($wherePartItem);
+            $wherePart[$key] = $this->_replaceTableAlias($wherePartItem);
         }
         $select->setPart(Zend_Db_Select::WHERE, $wherePart);
         $excludeJoinPart = Mage_Catalog_Model_Resource_Product_Collection::MAIN_TABLE_ALIAS . '.entity_id';
@@ -111,7 +114,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
         $priceExpr = $this->_getPriceExpression($filter, $select, false);
         $whereArray = array();
 
-        foreach($intervals as $interval) {
+        foreach ($intervals as $interval) {
             list($from, $to) = $interval;
             if ($from === '' && $to === '') {
                 return $this;
@@ -125,21 +128,19 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
             }
 
             if ($from !== '' && $to !== '') {
-//                $select->orWhere("{$priceExpr} >= {$this->_getComparingValue($from, $filter)} AND {$priceExpr} < {$this->_getComparingValue($to, $filter)}");
-                $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)} AND {$priceExpr} < {$this->_getComparingValue($to, $filter)})";
+                $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)} AND {$priceExpr} < " .
+                    "{$this->_getComparingValue($to, $filter)})";
             } else {
                 if ($from !== '') {
-//                  $select->orWhere("{$priceExpr} >= {$this->_getComparingValue($from, $filter)}");
                     $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)})";
                 }
                 if ($to !== '') {
-//                  $select->orWhere("({$priceExpr} < {$this->_getComparingValue($to, $filter)}");
                     $whereArray[] = "({$priceExpr} < {$this->_getComparingValue($to, $filter)})";
                 }
             }
         }
 
-        $select->where(implode(' OR ', $whereArray));
+        $select->where(new Zend_db_Expr(implode(' OR ', $whereArray)));
 
         return $this;
     }

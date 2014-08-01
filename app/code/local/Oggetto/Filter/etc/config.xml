@@ -45,12 +45,19 @@ please refer to http://www.magentocommerce.com for more information.
 
 
     <global>
+        <helpers>
+            <oggetto_filter>
+                <class>Oggetto_Filter_Helper</class>
+            </oggetto_filter>
+        </helpers>
+
         <models>
             <catalog>
                 <rewrite>
                     <layer_filter_attribute>Oggetto_Filter_Model_Layer_Filter_Attribute</layer_filter_attribute>
                     <layer_filter_price>Oggetto_Filter_Model_Layer_Filter_Price</layer_filter_price>
                     <layer_filter_item>Oggetto_Filter_Model_Layer_Filter_Item</layer_filter_item>
+                    <layer_filter_category>Oggetto_Filter_Model_Layer_Filter_Category</layer_filter_category>
                 </rewrite>
             </catalog>
 

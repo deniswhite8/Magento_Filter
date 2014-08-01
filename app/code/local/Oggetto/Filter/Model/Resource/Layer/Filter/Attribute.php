@@ -86,21 +86,27 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
             $connection->quoteInto("{$tableAlias}.attribute_id = ?", $attribute->getAttributeId()),
             $connection->quoteInto("{$tableAlias}.store_id = ?", $filter->getStoreId()),
         );
+        $conditions = join(' AND ', $conditions);
 
-        if (strpos((string)$select, "`{$tableAlias}`") !== false) {
-            $query = new Zend_Db_Expr("SELECT `{$tableAlias}`.`value`, COUNT({$tableAlias}.entity_id) AS `count` ") .
-                (string)$select . new Zend_Db_Expr(" GROUP BY {$tableAlias}.value");
-            $query = preg_replace("/AND \\({$tableAlias}\\.value/", "AND NOT ({$tableAlias}.value", $query);
+        $fromParts = $select->getPart(Zend_Db_Select::FROM);
 
-            return $connection->fetchPairs($query);
-        } else {
-            $select->join(
-                array($tableAlias => $this->getMainTable()),
-                join(' AND ', $conditions),
-                array('value', 'count' => new Zend_Db_Expr("COUNT({$tableAlias}.entity_id)")))
-                ->group("{$tableAlias}.value");
+        if (isset($fromParts[$tableAlias])) {
+            $conditionArray = explode(' AND ', $fromParts[$tableAlias]['joinCondition']);
+            //$valueSubConditional = end($conditionArray);
+            //$conditionArray[count($conditionArray) - 1] = 'NOT ' . $valueSubConditional;
+            unset($conditionArray[count($conditionArray) - 1]);
+            $conditions = implode(' AND ', $conditionArray);
 
-            return $connection->fetchPairs($select);
+            unset($fromParts[$tableAlias]);
+            $select->setPart(Zend_Db_Select::FROM, $fromParts);
         }
+
+        $select->join(
+            array($tableAlias => $this->getMainTable()),
+            $conditions,
+            array('value', 'count' => new Zend_Db_Expr("COUNT({$tableAlias}.entity_id)")))
+            ->group("{$tableAlias}.value");
+
+        return $connection->fetchPairs($select);
     }
 }
