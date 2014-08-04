@@ -66,7 +66,7 @@ jQuery(function ($) {
                 data.filter = data.filter.replace(/ajax=1/g, '');
                 data.products = data.products.replace(/ajax=1/g, '').replace(/setLocation\(/g, 'setLocationAjax(');
 
-                col_left.html(data.filter);s
+                col_left.html(data.filter);
                 col_main.html(data.products);
             },
             error: function (jqXHR, textStatus, errorThrown) {
