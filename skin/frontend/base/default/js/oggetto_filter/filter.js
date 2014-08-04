@@ -17,24 +17,15 @@ jQuery(function ($) {
     $(document).find('.toolbar select').attr('onchange', 'setLocationAjax(this.value)');
 
 
+    var wrapper = $('.col-wrapper'),
+        col_left = $('.col-left-first'),
+        col_main = $('.col-main');
 
-    window.setLocationAjax = function(url) {
-        var wrapper = $('.col-wrapper'),
-            col_left = $('.col-left-first'),
-            col_main = $('.col-main'),
-            newPath = url.replace(location.host, '').split('//')[1];
+    if (!wrapper.length) {
+        wrapper = $('.main');
+    }
 
-        if (!wrapper.length) {
-            wrapper = $('.main');
-        }
-
-        $.ajax({
-            url: url,
-            data: 'ajax=1',
-            dataType: 'json',
-            beforeSend: function () {
-                wrapper.children().css('opacity', 0.1);
-                wrapper.append('\
+    wrapper.append('\
                     <div style="position: absolute;\
                         top: 0;\
                         left: 0;\
@@ -51,12 +42,26 @@ jQuery(function ($) {
                             "/>\
                     </div>\
                 ');
+
+    wrapper.children().last().hide();
+
+    window.setLocationAjax = function(url) {
+        var newPath = url.replace(location.host, '').split('//')[1];
+
+        $.ajax({
+            url: url,
+            data: 'ajax=1',
+            dataType: 'json',
+            beforeSend: function () {
+                wrapper.children().css('opacity', 0.1);
+                wrapper.children().last().show();
+                wrapper.children().last().css('opacity', 1);
             },
             success: function (data) {
                 history.replaceState(null, null, newPath);
 
                 wrapper.children().css('opacity', 1);
-                wrapper.children().last().remove();
+                wrapper.children().last().hide();
 
                 data.filter = data.filter.replace(/ajax=1/g, '');
                 data.products = data.products.replace(/ajax=1/g, '').replace(/setLocation\(/g, 'setLocationAjax(');
