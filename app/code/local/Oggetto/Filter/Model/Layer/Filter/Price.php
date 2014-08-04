@@ -281,9 +281,11 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
     public function getResetValue($filterValue)
     {
         $separator = Mage::helper('oggetto_filter/data')->getSeparator();
-        $currentFromPrice = explode('-', $filterValue)[0];
-        if (!$currentFromPrice) {
+
+        if (is_array($filterValue)) {
             $currentFromPrice = $filterValue[0];
+        } else {
+            $currentFromPrice = explode('-', $filterValue)[0];
         }
 
         $priorIntervals = $this->getPriorIntervals();
