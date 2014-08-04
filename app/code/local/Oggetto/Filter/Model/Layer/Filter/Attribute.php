@@ -32,6 +32,37 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
     protected $_filterValues;
 
     /**
+     * Initialize filter items
+     *
+     * @return  Oggetto_Filter_Model_Layer_Filter_Category
+     */
+    protected function _initItems()
+    {
+        $this->_items = Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_initItems($this,
+            $this->_getItemsData());
+        return $this;
+    }
+
+    /**
+     * Create filter item object
+     *
+     * @param string $label    Label
+     * @param mixed  $value    Value
+     * @param int    $selected Selected
+     * @param int    $count    Count
+     *
+     * @return Mage_Catalog_Model_Layer_Filter_Item
+     */
+    protected function _createItem($label, $value, $selected = 0, $count=0)
+    {
+        return Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_createItem($this, $label, $value,
+            $selected, $count);
+    }
+
+
+
+
+    /**
      * Apply attribute option filter to product collection
      *
      * @param   Zend_Controller_Request_Abstract $request
@@ -141,46 +172,5 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
         $currentKey = array_search($filterValue, $params);
         unset($params[$currentKey]);
         return implode($separator, $params);
-    }
-
-
-
-    /**
-     * Initialize filter items
-     *
-     * @return  Mage_Catalog_Model_Layer_Filter_Abstract
-     */
-    protected function _initItems()
-    {
-        $data = $this->_getItemsData();
-        $items = array();
-        foreach ($data as $itemData) {
-            $items[] = $this->_createItem(
-                $itemData['label'],
-                $itemData['value'],
-                $itemData['selected'],
-                $itemData['count']
-            );
-        }
-        $this->_items = $items;
-        return $this;
-    }
-
-    /**
-     * Create filter item object
-     *
-     * @param   string $label
-     * @param   mixed $value
-     * @param   int $count
-     * @return  Mage_Catalog_Model_Layer_Filter_Item
-     */
-    protected function _createItem($label, $value, $selected = 0, $count=0)
-    {
-        return Mage::getModel('catalog/layer_filter_item')
-            ->setFilter($this)
-            ->setLabel($label)
-            ->setValue($value)
-            ->setSelected($selected)
-            ->setCount($count);
     }
 }

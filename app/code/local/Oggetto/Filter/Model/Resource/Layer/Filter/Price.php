@@ -38,6 +38,39 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
      */
     protected $_filterValues;
 
+
+    /**
+     * Retrieve array with products counts per price range
+     *
+     * @param Mage_Catalog_Model_Layer_Filter_Price $filter
+     * @param int $range
+     * @return array
+     */
+    public function getCount($filter, $range)
+    {
+        $select = $this->_getSelect($filter);
+        $priceExpression = $this->_getFullPriceExpression($filter, $select);
+
+        /**
+         * Check and set correct variable values to prevent SQL-injections
+         */
+        $range = floatval($range);
+        if ($range == 0) {
+            $range = 1;
+        }
+        $countExpr = new Zend_Db_Expr('COUNT(distinct e.entity_id)');
+        $rangeExpr = new Zend_Db_Expr("FLOOR(({$priceExpression}) / {$range}) + 1");
+
+        $select->columns(array(
+            'range' => $rangeExpr,
+            'count' => $countExpr
+        ));
+        $select->group($rangeExpr)->order("$rangeExpr ASC");
+
+        return $this->_getReadAdapter()->fetchPairs($select);
+    }
+
+
     /**
      * Retrieve clean select with joined price index table
      *

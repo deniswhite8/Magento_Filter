@@ -34,7 +34,23 @@ jQuery(function ($) {
             dataType: 'json',
             beforeSend: function () {
                 wrapper.children().css('opacity', 0.1);
-                wrapper.append('<div style="position: absolute;top:0;left:0;width: 100%;height:100%;z-index:2; opacity: 1; background: transparent url(/skin/frontend/rwd/default/images/ajax-loader.gif) no-repeat; background-position:center;"></div>');
+                wrapper.append('\
+                    <div style="position: absolute;\
+                        top: 0;\
+                        left: 0;\
+                        width: 100%;\
+                        height:100%;\
+                        z-index:2;\
+                        opacity: 1;">\
+                            <img src="/skin/frontend/rwd/default/images/ajax-loader.gif" alt="" style="\
+                                position: fixed;\
+                                top: 50%;\
+                                left: 50%;\
+                                margin-top: -24px;\
+                                margin-left: -24px;\
+                            "/>\
+                    </div>\
+                ');
             },
             success: function (data) {
                 history.replaceState(null, null, newPath);
@@ -45,7 +61,7 @@ jQuery(function ($) {
                 data.filter = data.filter.replace(/ajax=1/g, '');
                 data.products = data.products.replace(/ajax=1/g, '').replace(/setLocation\(/g, 'setLocationAjax(');
 
-                col_left.html(data.filter);
+                col_left.html(data.filter);s
                 col_main.html(data.products);
             },
             error: function (jqXHR, textStatus, errorThrown) {

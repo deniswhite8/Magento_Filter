@@ -92,8 +92,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
 
         if (isset($fromParts[$tableAlias])) {
             $conditionArray = explode(' AND ', $fromParts[$tableAlias]['joinCondition']);
-            //$valueSubConditional = end($conditionArray);
-            //$conditionArray[count($conditionArray) - 1] = 'NOT ' . $valueSubConditional;
+
             unset($conditionArray[count($conditionArray) - 1]);
             $conditions = implode(' AND ', $conditionArray);
 
@@ -104,7 +103,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
         $select->join(
             array($tableAlias => $this->getMainTable()),
             $conditions,
-            array('value', 'count' => new Zend_Db_Expr("COUNT({$tableAlias}.entity_id)")))
+            array('value', 'count' => new Zend_Db_Expr("COUNT(distinct {$tableAlias}.entity_id)")))
             ->group("{$tableAlias}.value");
 
         return $connection->fetchPairs($select);
