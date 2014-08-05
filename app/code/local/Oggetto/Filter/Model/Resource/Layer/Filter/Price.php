@@ -24,11 +24,12 @@
 ?>
 <?php
 /**
- * Catalog Layer Price Filter resource model
+ * Helper data
  *
- * @category    Mage
- * @package     Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage Model
+ * @author     Denis Belov <dbelov@oggettoweb.com>
  */
 class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Model_Resource_Layer_Filter_Price
 {
@@ -42,8 +43,8 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
     /**
      * Retrieve array with products counts per price range
      *
-     * @param Mage_Catalog_Model_Layer_Filter_Price $filter
-     * @param int $range
+     * @param Mage_Catalog_Model_Layer_Filter_Price $filter Filter
+     * @param int                                   $range  Range
      * @return array
      */
     public function getCount($filter, $range)
@@ -74,7 +75,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
     /**
      * Retrieve clean select with joined price index table
      *
-     * @param Mage_Catalog_Model_Layer_Filter_Price $filter
+     * @param Mage_Catalog_Model_Layer_Filter_Price $filter Filter
      * @return Varien_Db_Select
      */
     protected function _getSelect($filter)
@@ -133,7 +134,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
     /**
      * Apply price range filter to product collection
      *
-     * @param Mage_Catalog_Model_Layer_Filter_Price $filter
+     * @param Mage_Catalog_Model_Layer_Filter_Price $filter Filter
      * @return Mage_Catalog_Model_Resource_Layer_Filter_Price
      */
     public function applyPriceRange($filter)

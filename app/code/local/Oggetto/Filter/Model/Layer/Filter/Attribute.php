@@ -23,6 +23,14 @@
  */
 ?>
 <?php
+/**
+ * Helper data
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage Model
+ * @author     Denis Belov <dbelov@oggettoweb.com>
+ */
 class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Layer_Filter_Attribute
 {
     /**
@@ -38,7 +46,7 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
      */
     protected function _initItems()
     {
-        $this->_items = Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_initItems($this,
+        $this->_items = Mage::getSingleton('oggetto_filter/layer_filter_data')->_initItems($this,
             $this->_getItemsData());
         return $this;
     }
@@ -55,7 +63,7 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
      */
     protected function _createItem($label, $value, $selected = 0, $count=0)
     {
-        return Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_createItem($this, $label, $value,
+        return Mage::getSingleton('oggetto_filter/layer_filter_data')->_createItem($this, $label, $value,
             $selected, $count);
     }
 
@@ -65,9 +73,10 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
     /**
      * Apply attribute option filter to product collection
      *
-     * @param   Zend_Controller_Request_Abstract $request
-     * @param   Varien_Object $filterBlock
-     * @return  Mage_Catalog_Model_Layer_Filter_Attribute
+     * @param Zend_Controller_Request_Abstract $request     Request
+     * @param Varien_Object                    $filterBlock Filter block
+     *
+     * @return Mage_Catalog_Model_Layer_Filter_Attribute
      */
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
     {
@@ -161,7 +170,6 @@ class Oggetto_Filter_Model_Layer_Filter_Attribute extends Mage_Catalog_Model_Lay
      * Get filter value for reset current filter state
      *
      * @param string $filterValue Filter value
-     *
      * @return mixed
      */
     public function getResetValue($filterValue)

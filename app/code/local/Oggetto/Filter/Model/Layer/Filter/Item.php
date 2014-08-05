@@ -24,11 +24,12 @@
 ?>
 <?php
 /**
- * Filter item model
+ * Helper data
  *
- * @category    Oggetto
- * @package     Oggetto_Filter
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage Model
+ * @author     Denis Belov <dbelov@oggettoweb.com>
  */
 class Oggetto_Filter_Model_Layer_Filter_Item extends Mage_Catalog_Model_Layer_Filter_Item
 {

@@ -24,11 +24,12 @@
 ?>
 <?php
 /**
- * Layer price filter
+ * Helper data
  *
- * @category    Mage
- * @package     Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage Model
+ * @author     Denis Belov <dbelov@oggettoweb.com>
  */
 
 /**
@@ -50,7 +51,7 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
      */
     protected function _initItems()
     {
-        $this->_items = Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_initItems($this,
+        $this->_items = Mage::getSingleton('oggetto_filter/layer_filter_data')->_initItems($this,
             $this->_getItemsData());
         return $this;
     }
@@ -67,7 +68,7 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
      */
     protected function _createItem($label, $value, $selected = 0, $count=0)
     {
-        return Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_createItem($this, $label, $value,
+        return Mage::getSingleton('oggetto_filter/layer_filter_data')->_createItem($this, $label, $value,
             $selected, $count);
     }
 
@@ -202,9 +203,9 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
             }
         }
 
-
+        ksort($dbRanges);
         if (!empty($dbRanges)) {
-//            $lastIndex = floor((round(($this->getMaxPriceInt()) * 1, 2)) / $range) + 1;
+            // $lastIndex = floor((round(($this->getMaxPriceInt()) * 1, 2)) / $range) + 1;
             $lastIndex = array_keys($dbRanges);
             $lastIndex = $lastIndex[count($lastIndex) - 1];
 
@@ -227,8 +228,8 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
     /**
      * Apply price range filter
      *
-     * @param Zend_Controller_Request_Abstract $request
-     * @param $filterBlock
+     * @param Zend_Controller_Request_Abstract         $request     Request
+     * @param Mage_Catalog_Block_Layer_Filter_Abstract $filterBlock Filter block
      *
      * @return Mage_Catalog_Model_Layer_Filter_Price
      */
@@ -276,6 +277,7 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
     /**
      * Get filter value for reset current filter state
      *
+     * @param string $filterValue Filter value
      * @return null|string
      */
     public function getResetValue($filterValue)

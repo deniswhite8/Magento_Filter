@@ -23,13 +23,21 @@
  */
 ?>
 <?php
+/**
+ * Helper data
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage Model
+ * @author     Denis Belov <dbelov@oggettoweb.com>
+ */
 class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_Model_Resource_Layer_Filter_Attribute
 {
     /**
      * Apply attribute filter to product collection
      *
-     * @param Mage_Catalog_Model_Layer_Filter_Attribute $filter
-     * @param array $values
+     * @param Mage_Catalog_Model_Layer_Filter_Attribute $filter Filter
+     * @param array                                     $values Values
      * @return Mage_Catalog_Model_Resource_Layer_Filter_Attribute
      */
     public function applyFilterToCollection($filter, $values)
@@ -64,7 +72,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
     /**
      * Retrieve array with products counts per attribute option
      *
-     * @param Mage_Catalog_Model_Layer_Filter_Attribute $filter
+     * @param Mage_Catalog_Model_Layer_Filter_Attribute $filter Filter
      * @return array
      */
     public function getCount($filter)

@@ -1,6 +1,6 @@
 <?php
 /**
- * Magento
+ * Oggetto Filter extension for Magento
  *
  * NOTICE OF LICENSE
  *
@@ -8,29 +8,28 @@
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * Do not edit or add to this file if you wish to upgrade
+ * the Oggetto Review module to newer versions in the future.
+ * If you wish to customize the Oggetto Review module for your needs
+ * please refer to http://www.magentocommerce.com for more information.
  *
- * @category    Mage
- * @package     Mage_Catalog
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @copyright  Copyright (C) 2014 Oggetto Web (http://oggettoweb.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-
+?>
+<?php
 /**
- * Product collection
+ * Helper data
  *
- * @category    Mage
- * @package     Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage Model
+ * @author     Denis Belov <dbelov@oggettoweb.com>
  */
 class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Model_Resource_Product_Collection
 {
@@ -107,7 +106,7 @@ class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Mode
     /**
      * Add category filter to product collection
      *
-     * @param Mage_Catalog_Model_Category $category
+     * @param Mage_Catalog_Model_Category $category Category
      * @return Mage_Catalog_Model_Resource_Product_Collection
      */
     public function pushCategoryFilter(Mage_Catalog_Model_Category $category)
@@ -145,9 +144,8 @@ class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Mode
     {
         Mage::dispatchEvent('catalog_product_collection_apply_limitations_before', array(
             'collection'  => $this,
-            'category_id' => isset($this->_productLimitationFilters['category_id'])
-                ? $this->_productLimitationFilters['category_id']
-                : null,
+            'category_id' => isset($this->_productLimitationFilters['category_id']) ?
+                    $this->_productLimitationFilters['category_id'] : null,
         ));
         $this->_prepareProductLimitationFilters();
         $this->_productLimitationJoinWebsite();
@@ -190,8 +188,7 @@ class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Mode
         if (isset($fromPart['cat_index'])) {
             $fromPart['cat_index']['joinCondition'] = $joinCond;
             $this->getSelect()->setPart(Zend_Db_Select::FROM, $fromPart);
-        }
-        else {
+        } else {
             $this->getSelect()->join(
                 array('cat_index' => $this->getTable('catalog/category_product_index')),
                 $joinCond,
@@ -212,7 +209,7 @@ class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Mode
     /**
      * Adding product count to categories collection
      *
-     * @param Mage_Eav_Model_Entity_Collection_Abstract $categoryCollection
+     * @param Mage_Eav_Model_Entity_Collection_Abstract $categoryCollection Category collection
      * @return Mage_Catalog_Model_Resource_Product_Collection
      */
     public function addCountToAllCategories($categoryCollection)

@@ -1,6 +1,6 @@
 <?php
 /**
- * Magento
+ * Oggetto Filter extension for Magento
  *
  * NOTICE OF LICENSE
  *
@@ -8,28 +8,28 @@
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
  * http://opensource.org/licenses/osl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * Do not edit or add to this file if you wish to upgrade
+ * the Oggetto Review module to newer versions in the future.
+ * If you wish to customize the Oggetto Review module for your needs
+ * please refer to http://www.magentocommerce.com for more information.
  *
- * @category    Mage
- * @package     Mage_Catalog
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @copyright  Copyright (C) 2014 Oggetto Web (http://oggettoweb.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
+?>
+<?php
 /**
- * Layer category filter
+ * Helper data
  *
- * @category    Mage
- * @package     Mage_Catalog
- * @author      Magento Core Team <core@magentocommerce.com>
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage Model
+ * @author     Denis Belov <dbelov@oggettoweb.com>
  */
 class Oggetto_Filter_Model_Layer_Filter_Category extends Mage_Catalog_Model_Layer_Filter_Category
 {
@@ -46,7 +46,7 @@ class Oggetto_Filter_Model_Layer_Filter_Category extends Mage_Catalog_Model_Laye
      */
     protected function _initItems()
     {
-        $this->_items = Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_initItems($this,
+        $this->_items = Mage::getSingleton('oggetto_filter/layer_filter_data')->_initItems($this,
             $this->_getItemsData());
         return $this;
     }
@@ -63,17 +63,15 @@ class Oggetto_Filter_Model_Layer_Filter_Category extends Mage_Catalog_Model_Laye
      */
     protected function _createItem($label, $value, $selected = 0, $count=0)
     {
-        return Mage::getSingleton('oggetto_filter/layer_filter_abstract')->_createItem($this, $label, $value,
+        return Mage::getSingleton('oggetto_filter/layer_filter_data')->_createItem($this, $label, $value,
             $selected, $count);
     }
-
-
-
 
 
     /**
      * Get filter value for reset current filter state
      *
+     * @param string $filterValue Filter value
      * @return mixed
      */
     public function getResetValue($filterValue)
@@ -89,8 +87,8 @@ class Oggetto_Filter_Model_Layer_Filter_Category extends Mage_Catalog_Model_Laye
     /**
      * Apply category filter to layer
      *
-     * @param   Zend_Controller_Request_Abstract $request
-     * @param   Mage_Core_Block_Abstract $filterBlock
+     * @param Zend_Controller_Request_Abstract $request     Request
+     * @param Mage_Core_Block_Abstract         $filterBlock Filter block
      * @return  Mage_Catalog_Model_Layer_Filter_Category
      */
     public function apply(Zend_Controller_Request_Abstract $request, $filterBlock)
