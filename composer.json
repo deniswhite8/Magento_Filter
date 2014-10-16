@@ -1,0 +1,23 @@
+{
+    "name": "oggetto/filter",
+    "type": "magento-module",
+    "license": "OSL-3.0",
+    "homepage": "https://github.com/deniswhite8/Magento_Filter",
+    "description": "Magento ajax multiselect filter module",
+    "authors": [
+        {
+        	"name": "Denis Belov",
+        	"email": "dbelov@oggettoweb.com"
+        }
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
+    },
+    "extra": {
+        "map": [
+            ["app/etc/modules/Oggetto_Filter.xml", "app/etc/modules/Oggetto_Filter.xml"],
+            ["app/code/local/Oggetto/Filter", "app/code/local/Oggetto/Filter"],
+            ["skin/frontend/base/default/js/oggetto_filter", "skin/frontend/base/default/js/oggetto_filter"]
+        ]
+    }
+}
