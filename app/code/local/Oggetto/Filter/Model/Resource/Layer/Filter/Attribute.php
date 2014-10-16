@@ -64,7 +64,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Attribute extends Mage_Catalog_
             array($tableAlias => $this->getMainTable()),
             implode(' AND ', $conditions),
             array()
-        )->group('e.entity_id');
+        )->distinct('e.entity_id');
 
         return $this;
     }

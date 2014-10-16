@@ -37,7 +37,6 @@ class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Mode
     protected $_wherePartStash;
     protected $_groupPartStash;
 
-
     /**
      * Clear statistics data
      *
