@@ -12,8 +12,8 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade
- * the Oggetto Review module to newer versions in the future.
- * If you wish to customize the Oggetto Review module for your needs
+ * the Oggetto Filter module to newer versions in the future.
+ * If you wish to customize the Oggetto Filter module for your needs
  * please refer to http://www.magentocommerce.com for more information.
  *
  * @category   Oggetto
@@ -69,7 +69,7 @@ class Oggetto_Filter_Model_Layer_Filter_Item extends Mage_Catalog_Model_Layer_Fi
         $paramName = $this->getFilter()->getRequestVar();
         $filterValue = $this->getValue();
 
-        $query = array($paramName => $this->getFilter()->getResetValue($filterValue));
+        $query = array($paramName => $this->getFilter()->getResetFilterValue($filterValue));
         $params['_current']     = true;
         $params['_query']       = $query;
         $params['_escape']      = true;

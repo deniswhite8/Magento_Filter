@@ -12,8 +12,8 @@
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade
- * the Oggetto Review module to newer versions in the future.
- * If you wish to customize the Oggetto Review module for your needs
+ * the Oggetto Filter module to newer versions in the future.
+ * If you wish to customize the Oggetto Filter module for your needs
  * please refer to http://www.magentocommerce.com for more information.
  *
  * @category   Oggetto
@@ -94,7 +94,9 @@ class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Mode
      */
     protected function _beforeLoad()
     {
-        if (is_array($this->_productLimitationFilters['category_id'])) {
+        if (isset($this->_productLimitationFilters['category_id']) &&
+            is_array($this->_productLimitationFilters['category_id'])
+        ) {
             $this->getSelect()->group('e.entity_id');
         }
 
