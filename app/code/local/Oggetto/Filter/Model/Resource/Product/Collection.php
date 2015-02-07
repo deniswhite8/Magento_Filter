@@ -94,7 +94,9 @@ class Oggetto_Filter_Model_Resource_Product_Collection extends Mage_Catalog_Mode
      */
     protected function _beforeLoad()
     {
-        if (is_array($this->_productLimitationFilters['category_id'])) {
+        if (isset($this->_productLimitationFilters['category_id']) &&
+            is_array($this->_productLimitationFilters['category_id'])
+        ) {
             $this->getSelect()->group('e.entity_id');
         }
 

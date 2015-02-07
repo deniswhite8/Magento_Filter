@@ -69,7 +69,7 @@ class Oggetto_Filter_Model_Layer_Filter_Item extends Mage_Catalog_Model_Layer_Fi
         $paramName = $this->getFilter()->getRequestVar();
         $filterValue = $this->getValue();
 
-        $query = array($paramName => $this->getFilter()->getResetValue($filterValue));
+        $query = array($paramName => $this->getFilter()->getResetFilterValue($filterValue));
         $params['_current']     = true;
         $params['_query']       = $query;
         $params['_escape']      = true;

@@ -66,7 +66,7 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
             'range' => $rangeExpr,
             'count' => $countExpr
         ));
-        $select->group($rangeExpr)->order("$rangeExpr ASC");
+        $select->group($rangeExpr)->order(new Zend_Db_Expr("$rangeExpr ASC"));
 
         return $this->_getReadAdapter()->fetchPairs($select);
     }
@@ -162,14 +162,13 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
             }
 
             if ($from !== '' && $to !== '') {
-                $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)} AND {$priceExpr} < " .
-                    "{$this->_getComparingValue($to, $filter)})";
+                $whereArray[] = "({$priceExpr} >= {$from} AND {$priceExpr} <= {$to})";
             } else {
                 if ($from !== '') {
-                    $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)})";
+                    $whereArray[] = "({$priceExpr} >= {$from})";
                 }
                 if ($to !== '') {
-                    $whereArray[] = "({$priceExpr} < {$this->_getComparingValue($to, $filter)})";
+                    $whereArray[] = "({$priceExpr} <= {$to})";
                 }
             }
         }

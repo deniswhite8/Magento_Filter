@@ -74,7 +74,7 @@ class Oggetto_Filter_Model_Layer_Filter_Category extends Mage_Catalog_Model_Laye
      * @param string $filterValue Filter value
      * @return mixed
      */
-    public function getResetValue($filterValue)
+    public function getResetFilterValue($filterValue)
     {
         $separator = Mage::helper('oggetto_filter/data')->getSeparator();
 
