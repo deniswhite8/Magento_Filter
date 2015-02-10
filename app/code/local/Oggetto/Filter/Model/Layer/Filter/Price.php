@@ -214,13 +214,12 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
         $dbRanges   = $this->getRangeItemCounts($range);
         $data       = array();
 
-        if (!$this->_filterValues) {
-            return $data;
-        }
-        foreach ($this->_filterValues as $fromPrice) {
-            $index = (int) floor((round(($fromPrice) * 1, 2)) / $range) + 1;
-            if (!isset($dbRanges[$index])) {
-                $dbRanges[$index] = 0;
+        if ($this->_filterValues) {
+            foreach ($this->_filterValues as $fromPrice) {
+                $index = (int) floor((round(($fromPrice) * 1, 2)) / $range) + 1;
+                if (!isset($dbRanges[$index])) {
+                    $dbRanges[$index] = 0;
+                }
             }
         }
 
@@ -238,7 +237,7 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
                     'label' => $this->_renderRangeLabel($fromPrice, $toPrice),
                     'value' => $fromPrice . '-' . $toPrice,
                     'count' => $count,
-                    'selected' => in_array($fromPrice, $this->_filterValues)
+                    'selected' => (is_array($this->_filterValues) && in_array($fromPrice, $this->_filterValues))
                 );
             }
         }
