@@ -40,6 +40,13 @@ please refer to http://www.magentocommerce.com for more information.
                     </modules>
                 </args>
             </catalog>
+            <catalogsearch>
+                <args>
+                    <modules>
+                        <Oggetto_Filter before="Mage_CatalogSearch">Oggetto_Filter</Oggetto_Filter>
+                    </modules>
+                </args>
+            </catalogsearch>
         </routers>
     </frontend>
 
@@ -64,6 +71,12 @@ please refer to http://www.magentocommerce.com for more information.
                     <layer_filter_category>Oggetto_Filter_Model_Layer_Filter_Category</layer_filter_category>
                 </rewrite>
             </catalog>
+
+            <catalogsearch>
+                <rewrite>
+                    <layer_filter_attribute>Oggetto_Filter_Model_Catalogsearch_Layer_Filter_Attribute</layer_filter_attribute>
+                </rewrite>
+            </catalogsearch>
 
             <catalog_resource>
                 <rewrite>

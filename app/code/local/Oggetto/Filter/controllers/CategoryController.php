@@ -21,9 +21,17 @@
  * @copyright  Copyright (C) 2014 Oggetto Web (http://oggettoweb.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-?>
-<?php
-require_once Mage::getModuleDir('controllers', 'Mage_Catalog').DS.'CategoryController.php';
+
+/**
+ * Catalog Search Controller
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Filter
+ * @subpackage controllers
+ * @author     Denis Belov <dbelov@oggettoweb.com>
+ */
+
+require_once Mage::getModuleDir('controllers', 'Mage_Catalog') . DS . 'CategoryController.php';
 
 class Oggetto_Filter_CategoryController extends Mage_Catalog_CategoryController
 {

@@ -24,7 +24,7 @@
 ?>
 <?php
 /**
- * Helper data
+ * Category filter attribute
  *
  * @category   Oggetto
  * @package    Oggetto_Filter
