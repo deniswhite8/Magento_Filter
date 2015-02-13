@@ -162,14 +162,14 @@ class Oggetto_Filter_Model_Resource_Layer_Filter_Price extends Mage_Catalog_Mode
             }
 
             if ($from !== '' && $to !== '') {
-                $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)} AND {$priceExpr} < " .
-                    "{$this->_getComparingValue($to, $filter)})";
+                $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)} AND {$priceExpr} <= " .
+                    "{$this->_getComparingValue($to, $filter, false)})";
             } else {
                 if ($from !== '') {
                     $whereArray[] = "({$priceExpr} >= {$this->_getComparingValue($from, $filter)})";
                 }
                 if ($to !== '') {
-                    $whereArray[] = "({$priceExpr} < {$this->_getComparingValue($to, $filter)})";
+                    $whereArray[] = "({$priceExpr} <= {$this->_getComparingValue($to, $filter, false)})";
                 }
             }
         }
