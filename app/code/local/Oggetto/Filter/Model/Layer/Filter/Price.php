@@ -120,7 +120,7 @@ class Oggetto_Filter_Model_Layer_Filter_Price extends Mage_Catalog_Model_Layer_F
             $collection = $this->getLayer()->getProductCollection();
             $maxPrice = $collection->clearPriceFilters()->getMaxPrice();
             $collection->retrievePriceFilters();
-            $maxPrice = floor($maxPrice);
+            $maxPrice = ceil($maxPrice);
             $this->setData('max_price_int', $maxPrice);
         }
 
