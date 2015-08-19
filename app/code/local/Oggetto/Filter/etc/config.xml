@@ -85,6 +85,11 @@ please refer to http://www.magentocommerce.com for more information.
                     <product_collection>Oggetto_Filter_Model_Resource_Product_Collection</product_collection>
                 </rewrite>
             </catalog_resource>
+            <catalogsearch_resource>
+                <rewrite>
+                    <fulltext_collection>Oggetto_Filter_Model_Resource_Fulltext_Collection</fulltext_collection>
+                </rewrite>
+            </catalogsearch_resource>
         </models>
     </global>
 </config>
